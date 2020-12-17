@@ -337,9 +337,20 @@ def createBlog():
     except:
         return render_template( 'createBlog.html' )   
 
-@app.route('/search')            
+@app.route('/search', methods=('GET','POST'))      
+@login_required      
 def search():
-    return render_template('search.html')
+    if request.method == 'GET':
+        busqueda = request.args.get('buscar')  
+        db = get_db() #Conectarse a la base de datos
+        q = f"SELECT * FROM blogs b, etiquetas e WHERE (titulo LIKE '%{busqueda}%' OR cuerpo LIKE '%{busqueda}%' OR e.nombre LIKE '%{busqueda}%') AND (privado = 0) AND b.etiqueta_ID = e.etiqueta_ID"
+        resultados = db.execute(q).fetchall()
+        close_db()
+        if resultados is None:
+            resultados = ["No se encuentra algún resultado","No se encuentra algún resultado"]
+        return render_template('dashboard.html', blog = resultados)
+ 
+    return render_template('dashboard.html')
 
 @app.before_request
 def load_logged_in_user():
