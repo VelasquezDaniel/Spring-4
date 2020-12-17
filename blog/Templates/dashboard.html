@@ -7,6 +7,8 @@
     <title>Dashboard</title>
     <link rel="shortcut icon" type="image/png" href="https://img.icons8.com/clouds/100/000000/flicker-free.png" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardStyle.css') }}" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Langar&display=swap" rel="stylesheet">
 </head>
 
 <header>
@@ -45,55 +47,18 @@
     </div>
     <div class="separador"></div>
     <div class="publicaciones">
-        <div class="post">
-            <h1>
-                <a href="www.google.com.co " rel="bookmark " title="Deja de usar tantos divs! ">Deja de usar tantos divs!</a
-            >
-          </h1>
-        </div>
-        <div class="post">
-          <h1>
-            <a
-              href="www.google.com.co "
-              rel="bookmark "
-              title="10 grandes proyectos de programacion para mejorar "
-              >10 grandes proyectos de programacion para mejorar</a
-            >
-          </h1>
-        </div>
-        <div class="post">
-          <h1>
-            <a
-              href="www.google.com.co "
-              rel="bookmark "
-              title="Crees saber JavaScript? "
-              >Crees saber JavaScript?</a
-            ><br><br><br>
-          </h1>
-        </div>
+      {% for blog_ in blog %}
+      <div class="minipost1">
+        <div class="titulopost"><a href="{{url_for('verBlog')}}?blog_ID={{blog_[0]}}"> {{ blog_[1] }} </a></div>
+        <div class="cuerpopost"> {{ blog_[3] }} </div>
+        <img class="like" height="25px" src="{{ url_for('static', filename='images/like.png') }}" alt="Like">
+        <img class="like" height="25px" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comentarios">
+        <div class="imapost"></div>
       </div>
+      {% endfor %}
+      </div>
+
     </section>
-
-  {% for blog_ in blog %}
-  <section style="text-align: center">
-        
-        <h3 class="post-title">{{ blog_[1] }}</h3>
-
-        <p readonly="true" class="date">Publicado en : {{ blog_[8] }}</p>
-        <p readonly="true" class="date">Creador por : {{ blog_[8] }}</p>
-        <textarea style="border: none" readonly="true" cols="80" rows="10" max-length="50">{{ blog_[3] }}</textarea><br>
-        <a href ="{{url_for('verBlog')}}?blog_ID={{blog_[0]}}">ver blog completo</a><br><br>
-
-
-                <!--<form class="ver-botton" action="{{url_for('verBlog')}}" method="post">
-          <botton value="{{blog[0]}}" name="blog_ID">Ver Blog</botton>
-        </form>-->
-
-</section>
-
-{% endfor %}
-
-
 
 <footer>
     <div class="bottom-footer">

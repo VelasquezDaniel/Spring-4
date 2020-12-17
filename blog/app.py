@@ -209,7 +209,7 @@ def newPassword():
             else:
                 flash('Las contraseña actual no concuerdan')
                 return render_template('changePassword.html')
-            db.close_db()
+            close_db()
             return render_template( 'changePassword.html' )
     except:
         #flash( 'Se ha producido un error, intente de nuevo en unos minutos' )
@@ -222,15 +222,12 @@ def newPassword():
 #   si el blog no es mio entonces llevarme a un visualizador de blogs y poder comentarlo. 
 #########################
 
-
-
-
-
 @app.route('/dashboard')
 @login_required
 def dashboard():
         db = get_db()
         blogs = db.execute('SELECT * FROM blogs WHERE privado= 0').fetchall()
+        close_db()
         return render_template('dashboard.html', blog = blogs)
 
 @app.route('/myBlogs')
@@ -240,14 +237,14 @@ def myBlogs():
         blogs = db.execute('SELECT * FROM blogs WHERE usuario_ID= ?',(session["usuario_ID"],)).fetchall()
         return render_template('myBlogs.html', blog = blogs)
 
-
 @app.route('/verblog', methods=['GET'])
 @login_required
 def verBlog():
     blog_ID = request.args.get('blog_ID')
     db = get_db()
     blog = db.execute('SELECT * FROM blogs WHERE blog_ID=?',(blog_ID,)).fetchone()
-    return render_template('verBlog.html', blog = blog)
+    autores = db.execute('SELECT usuario FROM usuarios WHERE usuario_ID=?',(blog[6],)).fetchone()
+    return render_template('verBlog.html', blog = blog, autor = autores)
 
 @app.route('/create')
 @login_required
@@ -358,5 +355,5 @@ def logout():
     return redirect( url_for( 'login' ) )	
 
 if __name__ == '__main__':	
-    app.run(debug=True,port=5000)
+    app.run(debug=True,port=80)
 

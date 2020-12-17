@@ -2,22 +2,38 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
-    <link rel="shortcut icon" type="image/png" href="https://img.icons8.com/clouds/100/000000/flicker-free.png" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardStyle.css') }}" />
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Dashboard</title>
+
+<!-- Bootstrap core CSS -->
+<link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+
+<!-- Custom fonts for this template -->
+<link href="{{ url_for('static', filename='css/all.min.css')}}" rel="stylesheet" type="text/css">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+<!-- Custom styles for this template -->
+<link href="{{ url_for('static', filename='css/clean-blog.min.css')}}" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardStyle.css') }}" />
+
 </head>
 
-<header>
+<body>
+
+
+  <header style="margin-bottom: 15px;">
     <div class="busquedad">
         <input href="/resultados " name="buscar " type="text " autocomplete="off " placeholder="Buscar " />
     </div>
     <div>
         <nav class="menu">
             <a href="/create">crear</a>
-            <a href=" ">Explorar</a>
-            <a href=" ">mis blogs</a>
+            <a href="/dashboard">Explorar</a>
+            <a href="/myBlogs">mis blogs</a>
         </nav>
     </div>
     <div class="perfil">
@@ -33,73 +49,50 @@
         </ul>
     </div>
 </header>
-<section>
-    <div>
-        <nav class="recomendados">
-            <a href=" ">Aprender a programar</a>
-            <a href=" ">Desarrollo web</a>
-            <a href=" ">Dispositivos moviles</a>
-            <a href=" ">Desarrollo IoT</a>
-            <a href=" ">Sistemas operativos</a>
-        </nav>
-    </div>
-    <div class="separador"></div>
-    <div class="publicaciones">
-        <div class="post">
-            <h1>
-                <a href="www.google.com.co " rel="bookmark " title="Deja de usar tantos divs! ">Deja de usar tantos divs!</a
-            >
-          </h1>
-        </div>
-        <div class="post">
-          <h1>
-            <a
-              href="www.google.com.co "
-              rel="bookmark "
-              title="10 grandes proyectos de programacion para mejorar "
-              >10 grandes proyectos de programacion para mejorar</a
-            >
-          </h1>
-        </div>
-        <div class="post">
-          <h1>
-            <a
-              href="www.google.com.co "
-              rel="bookmark "
-              title="Crees saber JavaScript? "
-              >Crees saber JavaScript?</a
-            ><br><br><br>
-          </h1>
+  <main class="masthead"  style=" padding-bottom: 300px; background-size: cover; color:white; background-image : url({{ url_for('static', filename='images/post-bg.jpg') }})"> 
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1 style="margin-bottom: 100px;">{{ blog[1] }}</h1>
+            <span class="meta">Creado por
+              {{autor[0]}} </em>
+              el día {{ blog[8] }}</span>
+          </div>
         </div>
       </div>
-    </section>
-  
- 
-  <section style="text-align: center">
-        
-        <h3 readonly="true" class="post-title">{{ blog[1] }}</h3>
-
-        <p   readonly="true" class="date">Publicado en : {{ blog[8] }}</p>
-        <textarea style="border: none" readonly="true" cols="80" rows="10" >{{ blog[3] }}</textarea><br><br>
-        <a href="{{url_for('dashboard')}}">volver atras</a>
-
-
-                <!--<form class="ver-botton" action="{{url_for('verBlog')}}" method="post">
-          <botton value="{{blog[0]}}" name="blog_ID">Ver Blog</botton>
-        </form>-->
-
-</section>
-
-
-
-<footer>
-    <div class="bottom-footer">
-        <p></p>
     </div>
-</footer>
+  </main>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p style="margin-bottom: 100px;">{{ blog[3] }}</p>
+
+          
+        <a href="{{url_for('dashboard')}}" style="color: blueviolet;">Volver Atrás</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <hr>
+          <p class="copyright text-muted">Copyright &copy; Group A BLogs 2020</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</main>
 </body>
-
-
-
 
 </html>

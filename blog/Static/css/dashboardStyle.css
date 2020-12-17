@@ -117,18 +117,55 @@ ol {
   border-style: dashed;
 }
 
-.post {
-  margin-top: 30px;
-}
-
-h1 {
-  text-align: center;
-}
-
-h1 a {
-  text-decoration: none;
-}
-
 .flash {
   color: red;
+}
+
+/*POST DEL BLOG*/
+.publicaciones {
+  margin-top: 2%;
+  margin-left: 14%;
+  width: 72%;
+  height: 720px;
+  /*border: solid red;*/
+}
+.minipost1 {
+  margin-left: 0.1%;
+  margin-top: 0.1%;
+  width: 99.9%;
+  height: 33.1%;
+  /*border: solid cyan;*/
+}
+.titulopost {
+  margin-left: 0.05%;
+  margin-top: 0.05%;
+  width: 60%;
+  height: 30%;
+  /*border: solid green;*/
+  font-size: 25px;
+  font-weight: bold;
+  font-family: "Langar", cursive;
+}
+a {
+  text-decoration: none;
+  color: black;
+}
+.cuerpopost {
+  margin-left: 0.05%;
+  margin-top: 0.05%;
+  width: 75%;
+  height: 61%;
+  /*border: solid black;*/
+}
+.imapost {
+  margin-left: 75%;
+  margin-top: -174px;
+  width: 25%;
+  height: 71%;
+  /*border: solid blue;*/
+  background-image: url(https://w.wallhaven.cc/full/28/wallhaven-28kdom.png);
+  background-size: cover;
+}
+.like {
+  margin-left: 10%;
 }

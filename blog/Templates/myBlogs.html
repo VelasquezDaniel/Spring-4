@@ -40,10 +40,15 @@
     <h3 class="post-title">{{ blog_[1] }}</h3>
 
     <p readonly="true" class="date">Publicado en : {{ blog_[8] }}</p>
-    <p readonly="true" class="date">Creador por : {{ session['Username'] }}</p>
     <p readonly="true" class="date">Privacidad : {{ blog_[4] }}</p>
     <textarea style="border: none" readonly="true" cols="80" rows="10" max-length="50">{{ blog_[3] }}</textarea><br>
     <a href="{{url_for('editBlog')}}?blog_ID={{blog_[0]}}">Editar blog</a><br><br>
+    <p readonly="true" class="date">Privacidad:
+        {% if blog_[4] == 1 %}
+        Privado</p>
+        {% else %}
+        Público</p>
+        {% endif %}
 
 </section>
 
