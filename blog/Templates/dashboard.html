@@ -57,6 +57,7 @@
         <div class="minipost1">
             <div class="titulopost"><a href="{{url_for('verBlog')}}?blog_ID={{blog_[0]}}"> {{ blog_[1] }} </a></div>
             <div class="cuerpopost"> {{ blog_[3] }} </div>
+            <a>{{ blog_[7] }}</a>
             <img class="like" height="25px" src="{{ url_for('static', filename='images/like.png') }}" alt="Like">
             <img class="like" height="25px" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comentarios">
             <div class="imapost"></div>
