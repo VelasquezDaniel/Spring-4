@@ -11,7 +11,9 @@
 
 <header>
     <div class="busquedad">
-        <input href="/resultados " name="buscar " type="text " autocomplete="off " placeholder="Buscar " />
+        <form action="{{url_for('search')}}">
+            <input type="text" placeholder="Buscar..." name="buscar">
+        </form>
     </div>
     <div>
         <nav class="menu">
@@ -32,28 +34,21 @@
             </li>
         </ul>
     </div>
-</header>
+</header>   
 
-{% for blog_ in blog %}
-<section style="text-align: center">
-    <br><br><br>
-    <h3 class="post-title">{{ blog_[1] }}</h3>
-
-    <p readonly="true" class="date">Publicado en : {{ blog_[8] }}</p>
-    <p readonly="true" class="date">Privacidad : {{ blog_[4] }}</p>
-    <textarea style="border: none" readonly="true" cols="80" rows="10" max-length="50">{{ blog_[3] }}</textarea><br>
-    <a href="{{url_for('editBlog')}}?blog_ID={{blog_[0]}}">Editar blog</a><br><br>
-    <p readonly="true" class="date">Privacidad:
-        {% if blog_[4] == 1 %}
-        Privado</p>
-        {% else %}
-        Público</p>
-        {% endif %}
-
-</section>
-
-{% endfor %}
-
+<div class="separador"></div>
+<div class="publicaciones">
+    {% for blog_ in blog %}
+    <div class="minipost1">
+        <div class="titulopost"><a href="{{url_for('verBlog')}}?blog_ID={{blog_[0]}}"> {{ blog_[1] }} </a></div>
+        <div class="cuerpopost"> {{ blog_[3] }} </div>
+        <a>{{ blog_[7] }}</a>
+        <img class="like" height="25px" src="{{ url_for('static', filename='images/like.png') }}" alt="Like">
+        <img class="like" height="25px" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comentarios">
+        <img src="https://blog-uninorte-2.s3.us-east-2.amazonaws.com/{{ blog_[2]}}"  class="imapost">
+    </div>
+    {% endfor %}
+</div>
 
 
 <footer>

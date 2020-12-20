@@ -15,16 +15,12 @@
     <div class="busquedad">
         <form action="{{url_for('search')}}">
             <input type="text" placeholder="Buscar..." name="buscar">
-            <button type="submit"><i class="fa fa-search"></i></button>
         </form>
     </div>
-    <!-- <div class="busquedad" action="{{url_for('createBlog')}}">
-        <input href="/resultados" id="buscar" name="buscar" type="text" autocomplete="off" placeholder="Buscar" />
-    </div> -->
     <div>
         <nav class="menu">
             <a href="/create">crear</a>
-            <a href=" ">Explorar</a>
+            <a href="/dashboard">Explorar</a>
             <a href="/myBlogs">mis blogs</a>
         </nav>
     </div>
@@ -40,7 +36,7 @@
             </li>
         </ul>
     </div>
-</header>
+</header>       
 <section>
     <div>
         <nav class="recomendados">
@@ -60,7 +56,7 @@
             <a>{{ blog_[7] }}</a>
             <img class="like" height="25px" src="{{ url_for('static', filename='images/like.png') }}" alt="Like">
             <img class="like" height="25px" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comentarios">
-            <div class="imapost"></div>
+            <img src="https://blog-uninorte-2.s3.us-east-2.amazonaws.com/{{ blog_[2]}}"  class="imapost">
         </div>
         {% endfor %}
     </div>

@@ -15,9 +15,14 @@ import secrets
 import string
 from sqlite3 import Error
 import yagmail as yagmail
+import boto3
 
 
 app = Flask(__name__)
+s3 = boto3.client('s3',
+                    aws_access_key_id='AKIAX2G5FWLKECAQ3DOT',
+                    aws_secret_access_key= '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',
+                    )
 app.secret_key = os.urandom(24)
 
 @app.route('/')
@@ -286,6 +291,7 @@ def actionedit():
 def createBlog():
     try:
         if request.method == 'POST':
+            img = request.files['imagenes']
             titulo = request.form['titulo']
             cuerpo = request.form['cuerpo']
             imagen = "No hay" #DEBEMOS MODIFICAR ESTO
@@ -295,8 +301,15 @@ def createBlog():
             likes = 0
             fechaCreacion = datetime.date.today()
             error = None
+            if img:
+                filename =  img.filename
+                img.save(filename)
+                response = s3.upload_file(
+                    Bucket = "blog-uninorte-2",
+                    Filename=filename,
+                    Key = filename
+                )
             db = get_db() #Conectarse a la base de datos
-
             if request.form['privacidad'] == "privado":
                 privado = True
             else:
@@ -328,7 +341,7 @@ def createBlog():
             
             db.execute(
                 'INSERT INTO blogs (titulo, imagen, cuerpo, privado, etiqueta_ID, usuario_ID, likes, fecha) VALUES (?,?,?,?,?,?,?,?)',
-                (titulo, imagen, cuerpo, privado, etiqueta, usuarioCreador, likes, fechaCreacion)
+                (titulo, filename, cuerpo, privado, etiqueta, usuarioCreador, likes, fechaCreacion)
             )
             db.commit()
             close_db()
@@ -349,7 +362,7 @@ def search():
         if resultados is None:
             resultados = ["No se encuentra algún resultado","No se encuentra algún resultado"]
         return render_template('dashboard.html', blog = resultados)
- 
+
     return render_template('dashboard.html')
 
 @app.before_request
