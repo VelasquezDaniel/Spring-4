@@ -220,20 +220,24 @@ def newPassword():
         #flash( 'Se ha producido un error, intente de nuevo en unos minutos' )
         return render_template( 'changePassword.html' )
 
-#Editar Blog - Necesito seleccionar la informacion del blog y enviarla a /edit una vez allí la puedo modificar 
-#Duda 1: como tomo la informacion de un blog? 
-#   yo quier: que al darle click ((((DUDA: que me envie a /edit con la informacion del blog))))
-#   Verificar si el blog fue creado por mi - me lleve de una a la ventana de editar 
-#   si el blog no es mio entonces llevarme a un visualizador de blogs y poder comentarlo. 
-#########################
-
 @app.route('/dashboard')
 @login_required
 def dashboard():
         db = get_db()
+        blogs_re = db.execute('SELECT * FROM blogs WHERE privado= 0').fetchall()
         blogs = db.execute('SELECT * FROM blogs WHERE privado= 0').fetchall()
+        comments = db.execute('SELECT b.blog_ID FROM comentarios c, blogs b WHERE  b.blog_ID = c.blog_ID').fetchall()
         close_db()
-        return render_template('dashboard.html', blog = blogs)
+        diccionario_comentarios = dict()
+        for comentario in comments:
+            for i in range(len(comments)):
+                if comentario == i:
+                    if diccionario_comentarios[comentario] in diccionario_comentarios:
+                        diccionario_comentarios[comentario] += 1
+                    else: 
+                        diccionario_comentarios[comentario] = 1
+        
+        return render_template('dashboard.html', blog = blogs,blog_re = blogs_re, comentarios = diccionario_comentarios)
 
 @app.route('/myBlogs')
 @login_required
@@ -246,10 +250,12 @@ def myBlogs():
 @login_required
 def verBlog():
     blog_ID = request.args.get('blog_ID')
+    session["blog_ID"] = blog_ID
     db = get_db()
     blog = db.execute('SELECT * FROM blogs WHERE blog_ID=?',(blog_ID,)).fetchone()
     autores = db.execute('SELECT usuario FROM usuarios WHERE usuario_ID=?',(blog[6],)).fetchone()
-    return render_template('verBlog.html', blog = blog, autor = autores)
+    comments = db.execute('SELECT c.comentario, u.usuario, c.fechaComentario FROM comentarios c, blogs b, usuarios u WHERE  b.blog_ID = c.blog_ID AND c.usuario_ID = u.usuario_ID AND b.blog_ID = ?',(blog_ID)).fetchall()
+    return render_template( 'VerBlog.html', blog = blog, autor = autores, comentarios = comments)
 
 @app.route('/create')
 @login_required
@@ -260,41 +266,116 @@ def create():
 @login_required	
 def editBlog():	
     blog_ID = request.args.get('blog_ID')
+    session["blog_ID"] = blog_ID
     db = get_db()
-    blog = db.execute('SELECT * FROM blogs WHERE blog_ID=?',(blog_ID,)).fetchone()
+    blog = db.execute('SELECT * FROM blogs b, etiquetas e WHERE blog_ID= ? AND e.etiqueta_ID = b.etiqueta_ID',(blog_ID,)).fetchone()
     return render_template('editBlog.html', blog = blog)
 
-@app.route('/actionedit', methods=('GET', 'POST'))	
+@app.route('/actionEdit', methods=('GET', 'POST'))	
 @login_required	
-def actionedit():	
+def actionEdit():	
     if request.method == 'POST':
+        blog_ID = session['blog_ID']
         titulo = request.form['titulo']
+        #img = request.files['imagenes']
         cuerpo = request.form['cuerpo']
-        imagen = "No hay" #DEBEMOS MODIFICAR ESTO
         etiqueta = request.form['etiqueta']
         etiqueta = str.lower(etiqueta)
-        usuarioCreador = session['usuario_ID']
-        likes = request.form['likes']
-        fechaCreacion = datetime.date.today()
-        error = None
-        db = get_db() #Conectarse a la base de datos
+        if request.form['privacidad'] == "privado":
+            privado = True
+        else:
+            privado = False 
+        
+        db = get_db()
 
-    blog_ID = request.args.get('blog_ID')
-    db = get_db()
-    blog = db.execute('SELECT * FROM blogs WHERE blog_ID=?',(blog_ID,)).fetchone()
-    return render_template('editBlog.html', blog = blog)
+        if titulo is None:
+                error = "debe ingresar el titulo del blog"
+                flash( error )
+                return render_template( 'create.html' )
 
-#@app.route('/resultados', methods=['GET'])
+        if cuerpo is None:
+            error = "debe ingresar el cuerpo del blog"
+            flash( error )
+            return render_template( 'create.html' )
+
+        if privado is None:
+            error = "debe seleccionar la privacidad del blog"
+            flash( error )
+            return render_template( 'create.html' )
+            
+        tag = db.execute('SELECT etiqueta_ID FROM etiquetas WHERE nombre = ?',(etiqueta,)).fetchone()
+
+        if tag is None:
+            db.execute('INSERT INTO etiquetas (nombre) VALUES (?)',(etiqueta,))
+            tag = db.execute('SELECT etiqueta_ID FROM etiquetas WHERE nombre = ?',(etiqueta,)).fetchone()
+            etiqueta = tag[0]
+        else:
+            etiqueta = tag[0]
+        """
+        if img is not None:
+            filename =  img.filename
+            img.save(filename)
+            response = s3.upload_file(
+                Bucket = "blog-uninorte-2",
+                Filename=filename,
+                key = filename)
+            blog = db.execute('UPDATE blogs SET titulo =?, imagen = ?, cuerpo = ?, privado = ? WHERE blog_ID=?',(titulo, filename, cuerpo, privado, etiqueta, blog_ID,))
+        else:"""
+
+        db.execute('UPDATE blogs SET titulo =?, cuerpo = ?, privado = ? WHERE blog_ID=?',(titulo, cuerpo, privado, blog_ID,))
+        db.commit()
+        close_db()
+        return redirect( 'myBlogs')
+
+    return render_template('editBlog.html') 
+
+@app.route('/actionDelete', methods=('GET', 'POST'))	
+@login_required	
+def actionDelete():	
+    if request.method == 'GET':
+        blog_ID = request.args.get('blog_ID')
+        db = get_db()
+        blog = db.execute('DELETE FROM blogs WHERE blog_ID= ? ',(blog_ID, ))
+        db.commit()
+        close_db()
+        return redirect( 'myBlogs')
+        
+    return render_template('myBlogs.html')
+    
+
+@app.route('/actionComment', methods=('GET', 'POST'))
+@login_required
+def actionComment():
+    try:
+        if request.method == 'POST':
+            blog_ID = session["blog_ID"]
+            usuario_ID = session['usuario_ID']
+            comentario = request.form['comentariover']
+            
+            fechaComentario = datetime.date.today()
+            db = get_db()
+            db.execute('INSERT INTO comentarios (blog_ID, comentario, usuario_ID, fechaComentario) VALUES (?,?,?,?)',(blog_ID, comentario, usuario_ID, fechaComentario))
+            blog = db.execute('SELECT * FROM blogs WHERE blog_ID=?',(blog_ID,)).fetchone()
+            autores = db.execute('SELECT usuario FROM usuarios WHERE usuario_ID=?',(blog[6],)).fetchone()
+            comments = db.execute('SELECT c.comentario, u.usuario, c.fechaComentario FROM comentarios c, blogs b, usuarios u WHERE  b.blog_ID = c.blog_ID AND c.usuario_ID = u.usuario_ID AND b.blog_ID = ?',(blog_ID)).fetchall()
+            db.commit()
+            close_db()
+            #return redirect('dashboard')
+            #return render_template( 'VerBlog')
+            return render_template( 'VerBlog.html' ,blog = blog, autor = autores, comentario = comments)
+        return render_template( 'VerBlog.html' )
+    except:
+        return render_template( 'VerBlog.html' )
+
 
 @app.route('/createBlog', methods=('GET', 'POST'))
 @login_required
 def createBlog():
     try:
         if request.method == 'POST':
-            img = request.files['imagenes']
             titulo = request.form['titulo']
+            img = request.files['imagenes']
             cuerpo = request.form['cuerpo']
-            imagen = "No hay" #DEBEMOS MODIFICAR ESTO
             etiqueta = request.form['etiqueta']
             etiqueta = str.lower(etiqueta)
             usuarioCreador = session['usuario_ID']
@@ -315,7 +396,7 @@ def createBlog():
             else:
                 privado = False 
             
-            if cuerpo is None:
+            if titulo is None:
                 error = "debe ingresar el titulo del blog"
                 flash( error )
                 return render_template( 'create.html' )
@@ -354,14 +435,24 @@ def createBlog():
 @login_required      
 def search():
     if request.method == 'GET':
-        busqueda = request.args.get('buscar')  
         db = get_db() #Conectarse a la base de datos
+        blogs_re = db.execute('SELECT * FROM blogs WHERE privado= 0').fetchall()
+        busqueda = request.args.get('buscar')  
+        comments = db.execute('SELECT b.blog_ID FROM comentarios c, blogs b WHERE  b.blog_ID = c.blog_ID').fetchall()
         q = f"SELECT * FROM blogs b, etiquetas e WHERE (titulo LIKE '%{busqueda}%' OR cuerpo LIKE '%{busqueda}%' OR e.nombre LIKE '%{busqueda}%') AND (privado = 0) AND b.etiqueta_ID = e.etiqueta_ID"
         resultados = db.execute(q).fetchall()
+        diccionario_comentarios = dict()
+        for comentario in comments:
+            for i in range(len(comments)):
+                if comentario == i:
+                    if diccionario_comentarios[comentario] in diccionario_comentarios:
+                        diccionario_comentarios[comentario] += 1
+                    else: 
+                        diccionario_comentarios[comentario] = 1
         close_db()
         if resultados is None:
             resultados = ["No se encuentra algún resultado","No se encuentra algún resultado"]
-        return render_template('dashboard.html', blog = resultados)
+        return render_template('dashboard.html', blog = resultados, blog_re = blogs_re, comentarios = diccionario_comentarios )
 
     return render_template('dashboard.html')
 

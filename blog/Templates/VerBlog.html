@@ -4,30 +4,29 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
 
     <!-- Custom fonts for this template -->
-    <link href="{{ url_for('static', filename='css/all.min.css')}}" rel="stylesheet" type="text/css">
+    <!-- <link href="{{ url_for('static', filename='css/all.min.css')}}" rel="stylesheet" type="text/css"> -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
 
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='css/clean-blog.min.css')}}" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboardStyle.css') }}" />
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/VerBlog.css') }}">
 </head>
 
 <body>
-
-
-    <header style="margin-bottom: 15px;">
+    <header>
         <div class="busquedad">
-            <input href="/resultados " name="buscar " type="text " autocomplete="off " placeholder="Buscar " />
+            <form action="{{url_for('search')}}">
+                <input style="padding-right: 38px;" type="text" placeholder="Buscar..." name="buscar">
+            </form>
         </div>
         <div>
             <nav class="menu">
@@ -49,7 +48,8 @@
             </ul>
         </div>
     </header>
-    <main class="masthead" style=" padding-bottom: 300px; background-size: cover;color:white; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; color:white; background-image : url({{ url_for('static', filename='images/post-bg.jpg') }})">
+
+    <main class="masthead" style=" padding-bottom: 300px; background-size: cover;color:white; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; color:white; background-image : url(https://blog-uninorte-2.s3.us-east-2.amazonaws.com/{{ blog[2] }})">
         <div class="overlay"></div>
         <div class="container">
             <div class="row">
@@ -57,8 +57,8 @@
                     <div class="post-heading">
                         <h1 style="margin-bottom: 100px;">{{ blog[1] }}</h1>
                         <span class="meta">Creado por
-              {{autor[0]}} </em>
-              el día {{ blog[8] }}</span>
+                {{autor[0]}} </em>
+                el día {{ blog[8] }}</span>
                     </div>
                 </div>
             </div>
@@ -70,10 +70,20 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-md-10 mx-auto">
-                    <p style="margin-bottom: 100px;">{{ blog[3] }}</p>
-
-
-                    <a href="{{url_for('dashboard')}}" style="color: blueviolet;">Volver Atrás</a>
+                    <p style="margin-bottom: 100px;">{{ blog[3] }}</p><br><br> {% for comentario in comentarios%}
+                    <div class="post-heading">
+                        <div style="width: 75%; height: 61%;" class="coments"> {{ comentario[0] }} </div>
+                        <span class="meta">Creado por {{comentario[1]}} </em> el día {{ comentario[2] }}</span>
+                    </div><br> {% endfor %}
+                    <form method="post" action="{{url_for('actionComment')}}">
+                        <textarea name="comentariover" id="comentarios" cols="30" rows="10" placeholder="Comentarios" style="width:600px; height:100px;"></textarea>
+                        <br>
+                        <br>
+                        <input type="submit" readonly="true" required="required" value="Agregar Comentario" style=" width: 22%; font-size:10pt; ">
+                    </form>
+                    <br>
+                    <br>
+                    <a href="{{url_for( 'dashboard')}} " style="color: blueviolet; ">Volver Atrás</a>
                 </div>
             </div>
         </div>
@@ -81,13 +91,14 @@
 
     <hr>
 
+
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="container ">
+            <div class="row ">
+                <div class="col-lg-8 col-md-10 mx-auto ">
                     <hr>
-                    <p class="copyright text-muted">Copyright &copy; Group A BLogs 2020</p>
+                    <p class="copyright text-muted ">Copyright &copy; Group A BLogs 2020</p>
                 </div>
             </div>
         </div>

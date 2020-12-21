@@ -34,20 +34,36 @@
             </li>
         </ul>
     </div>
-</header>   
+</header>
 
 <div class="separador"></div>
 <div class="publicaciones">
     {% for blog_ in blog %}
     <div class="minipost1">
         <div class="titulopost"><a href="{{url_for('verBlog')}}?blog_ID={{blog_[0]}}"> {{ blog_[1] }} </a></div>
+        <div class="date">
+            <p>Creado el día {{ blog_[8]}}</p>
+        </div>
+        <div class="privacity">
+            <p>Privacidad: {% if blog_[4] == 1 %} Privado
+            </p>
+            {% else %} Público
+            </p>
+            {% endif %} </div><br>
         <div class="cuerpopost"> {{ blog_[3] }} </div>
-        <a>{{ blog_[7] }}</a>
+        <a style="text-align:center" href="{{url_for('editBlog')}}?blog_ID={{blog_[0]}}"><img class="like" height="25px" src="https://img.icons8.com/pastel-glyph/64/000000/edit--v2.png" alt="Editar Blog" /></a>
+        <a style="text-align:right" href="{{url_for('actionDelete')}}?blog_ID={{blog_[0]}}"><img class="like" height="25px" src="http://northshorebears.com/upload/img/Report%20It%20Garbage%20Icon.png" alt="Eliminar Blog" /></a>
         <img class="like" height="25px" src="{{ url_for('static', filename='images/like.png') }}" alt="Like">
         <img class="like" height="25px" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comentarios">
-        <img src="https://blog-uninorte-2.s3.us-east-2.amazonaws.com/{{ blog_[2]}}"  class="imapost">
-    </div>
-    {% endfor %}
+        <img src="https://blog-uninorte-2.s3.us-east-2.amazonaws.com/{{ blog_[2]}}" class="imapost">
+    </div><br><br>
+    <hr> {% endfor %} {% if blog|length ==0 %}
+    <section style="text-align:center">
+        <h1>No tienen ningun blog aún</h1><br>
+        <h2>Te invitamos a que expreses tus ideas y comiences con esta inolvidable experiencia</h2>
+    </section>
+
+    {% endif %}
 </div>
 
 

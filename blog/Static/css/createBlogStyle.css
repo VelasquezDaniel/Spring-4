@@ -32,3 +32,7 @@ input[type=text] {
     width: 55%;
     padding: 0.5%;
 }
+
+.accionar {
+    justify-content: space-between;
+}

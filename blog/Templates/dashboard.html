@@ -11,66 +11,69 @@
     <link href="https://fonts.googleapis.com/css2?family=Langar&display=swap" rel="stylesheet">
 </head>
 
-<header>
-    <div class="busquedad">
-        <form action="{{url_for('search')}}">
-            <input type="text" placeholder="Buscar..." name="buscar">
-        </form>
-    </div>
-    <div>
-        <nav class="menu">
-            <a href="/create">crear</a>
-            <a href="/dashboard">Explorar</a>
-            <a href="/myBlogs">mis blogs</a>
-        </nav>
-    </div>
-    <div class="perfil">
-        <ul class="nav">
-            <li>
-                <a href=" ">Usuario: {{session['username']}}</a>
-                <ul>
-                    <li><a href="/perfil">Perfil</a></li>
-                    <li><a href="/cambiarClave">Configuracion</a></li>
-                    <li><a href="/logout">Cerrar Sesion</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-</header>       
-<section>
-    <div>
-        <nav class="recomendados">
-            <a href=" ">Aprender a programar</a>
-            <a href=" ">Desarrollo web</a>
-            <a href=" ">Dispositivos moviles</a>
-            <a href=" ">Desarrollo IoT</a>
-            <a href=" ">Sistemas operativos</a>
-        </nav>
-    </div>
-    <div class="separador"></div>
-    <div class="publicaciones">
-        {% for blog_ in blog %}
-        <div class="minipost1">
-            <div class="titulopost"><a href="{{url_for('verBlog')}}?blog_ID={{blog_[0]}}"> {{ blog_[1] }} </a></div>
-            <div class="cuerpopost"> {{ blog_[3] }} </div>
-            <a>{{ blog_[7] }}</a>
-            <img class="like" height="25px" src="{{ url_for('static', filename='images/like.png') }}" alt="Like">
-            <img class="like" height="25px" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comentarios">
-            <img src="https://blog-uninorte-2.s3.us-east-2.amazonaws.com/{{ blog_[2]}}"  class="imapost">
+<body>
+    <header>
+        <div class="busquedad">
+            <form action="{{url_for('search')}}">
+                <input type="text" placeholder="Buscar..." name="buscar">
+            </form>
         </div>
-        {% endfor %}
-    </div>
+        <div>
+            <nav class="menu">
+                <a href="/create">crear</a>
+                <a href="/dashboard">Explorar</a>
+                <a href="/myBlogs">mis blogs</a>
+            </nav>
+        </div>
+        <div class="perfil">
+            <ul class="nav">
+                <li>
+                    <a href=" ">Usuario: {{session['username']}}</a>
+                    <ul>
+                        <li><a href="/perfil">Perfil</a></li>
+                        <li><a href="/cambiarClave">Configuracion</a></li>
+                        <li><a href="/logout">Cerrar Sesion</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <section>
+        <div>
+            <nav class="recomendados">
+                {% for i in range(4) %}
+                <a href="{{url_for('verBlog')}}?blog_ID={{blog_re[i][0]}}">{{ blog_re[i][1] }}</a> {% endfor %}
+            </nav>
+        </div>
+        <div class="separador"></div>
+        <div class="publicaciones">
+            {% for blog_ in blog|reverse %}
+            <div class="minipost1">
+                <div class="titulopost"><a href="{{url_for('verBlog')}}?blog_ID={{blog_[0]}}"> {{ blog_[1] }} </a></div>
+                <div class="cuerpopost"> {{ blog_[3] }} </div>
+                <img class="like" height="25px" src="{{ url_for('static', filename='images/like.png') }}" alt="Like">
+                <p style="display:inline-block">{{ blog_[7] }}</p>
+                <img class="like" height="25px" src="{{ url_for('static', filename='images/comments.png') }}" alt="Comentarios">
+                <!--{% raw %}
+                {% if comentario[] == blog_[0] %}
+                {% numero_comentarios = 0 %}
+                {% numero_comentarios+= 1%}
+                {% endif %} 
+                {% endfor %}
+                {% endraw %}-->
+                <p style="display:inline-block">{{comentarios[blog_0]}}</p>
+                <img src="https://blog-uninorte-2.s3.us-east-2.amazonaws.com/{{ blog_[2]}}" class="imapost">
+            </div>
+            {% endfor %}
+        </div>
 
-</section>
+    </section>
 
-<footer>
-    <div class="bottom-footer">
-        <p></p>
-    </div>
-</footer>
+    <footer>
+        <div class="bottom-footer">
+            <p></p>
+        </div>
+    </footer>
 </body>
-
-
-
 
 </html>
